@@ -246,12 +246,12 @@
                     // User is logged in
                     sidebarNavLinks.innerHTML = `
                         <li><a href="/" class="nav-item ${window.location.pathname === '/' ? 'active' : ''}">Home</a></li>
-                        <li><a href="#" class="nav-item">Wardrobe</a></li>
-                        <li><a href="#" class="nav-item">Recommendations</a></li>
-                        <li><a href="#" class="nav-item">Virtual Try-On</a></li>
-                        <li><a href="#" class="nav-item">Shop</a></li>
+                        <li><a href="/wardrobe" class="nav-item ${window.location.pathname === '/wardrobe' ? 'active' : ''}">Wardrobe</a></li>
+                        <li><a href="/recommendations" class="nav-item ${window.location.pathname === '/recommendations' ? 'active' : ''}">Recommendations</a></li>
+                        <li><a href="/virtual-try-on" class="nav-item ${window.location.pathname === '/virtual-try-on' ? 'active' : ''}">Virtual Try-On</a></li>
+                        <li><a href="/shop" class="nav-item ${window.location.pathname === '/shop' ? 'active' : ''}">Shop</a></li>
                         <li><a href="/profile" class="nav-item ${window.location.pathname === '/profile' ? 'active' : ''}">Profile</a></li>
-                        <li><a href="#" class="nav-item">Settings</a></li>
+                        <li><a href="/settings" class="nav-item ${window.location.pathname === '/settings' ? 'active' : ''}">Settings</a></li>
                     `;
                     sidebarFooter.innerHTML = `<a href="/logout" class="nav-item logout-button">Logout (${authData.username})</a>`;
                     if (profileIconLink) profileIconLink.style.display = 'flex';

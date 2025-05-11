@@ -76,6 +76,24 @@ function initThreeJSScene(gender, measurements) {
             }
             currentModel = gltf.scene;
 
+            // --- Inspect for Morph Targets ---
+            console.log("Inspecting model for morph targets:", modelPath);
+            currentModel.traverse(function (object) {
+                if (object.isMesh) {
+                    console.log("  Mesh found:", object.name);
+                    if (object.morphTargetDictionary) {
+                        console.log("    Morph Target Dictionary:", object.morphTargetDictionary);
+                    }
+                    if (object.morphTargetInfluences) {
+                        console.log("    Morph Target Influences:", object.morphTargetInfluences);
+                    }
+                    if (!object.morphTargetDictionary && !object.morphTargetInfluences) {
+                        console.log("    No morph targets found on this mesh.");
+                    }
+                }
+            });
+            // --- End of Morph Target Inspection ---
+
             // --- Reference dimensions (in meters for unscaled model) ---
             // These might need to be specific to your GLB models if they are not 1 unit = 1 meter.
             // For now, assume a generic human reference for scaling logic.
