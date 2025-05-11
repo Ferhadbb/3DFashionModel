@@ -72,7 +72,7 @@ This project is a web application that acts as a personal AI fashion advisor. It
 *   `README.md`: This file.
 *   `models/`: Directory containing 3D model files (e.g., `.glb`).
 
-## Next Steps & Future Enhancements (from original README)
+## Next Steps & Future Enhancements 
 
 *   Full integration of 3D body model rendering using measurements from `script.js`.
 *   Advanced 3D modeling and texturing.
