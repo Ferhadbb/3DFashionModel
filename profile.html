@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - AI Fashion Advisor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <button class="sidebar-toggle" id="sidebarToggle">&#9776;</button>
+                <h1><a href="/" style="color: inherit; text-decoration: none;">AI Fashion Advisor</a></h1>
+            </div>
+            <div class="profile-icon-placeholder" id="profileIcon">
+                <a href="/profile" aria-label="View Profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32px" height="32px"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20z"/></svg>
+                </a>
+            </div>
+        </header>
+
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <ul id="sidebarNavLinks">
+                    <!-- Links will be dynamically populated by JS -->
+                </ul>
+            </nav>
+            <div class="sidebar-footer" id="sidebarFooter">
+                <!-- Logout button will be dynamically added by JS if logged in -->
+            </div>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <h2>Your Profile</h2>
+            <p>This is where your personalized information and settings will be displayed.</p>
+            <div style="margin-top: 20px; padding: 20px; background-color: var(--secondary-bg); border-radius: 8px;" id="profileMeasurementsSectionContainer">
+                <h3>Your Measurements & Preferences</h3>
+                <p><em>(User data like height, weight, saved measurements, and style preferences will appear here.)</em></p>
+                <div id="profileMeasurementsList">
+                    <p><em>Loading measurements...</em></p> 
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar Toggle Logic
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+        }
+
+        // Function to update UI based on auth status
+        async function updateUIAfterAuthCheck() {
+            try {
+                const response = await fetch('/api/auth/status');
+                const authData = await response.json();
+
+                const sidebarNavLinks = document.getElementById('sidebarNavLinks');
+                const sidebarFooter = document.getElementById('sidebarFooter');
+                const profileIconLink = document.querySelector('.profile-icon-placeholder a');
+
+                sidebarNavLinks.innerHTML = ''; 
+                sidebarFooter.innerHTML = ''; 
+
+                if (authData.logged_in) {
+                    sidebarNavLinks.innerHTML = `
+                        <li><a href="/" class="nav-item ${window.location.pathname === '/' ? 'active' : ''}">Home</a></li>
+                        <li><a href="#" class="nav-item">Wardrobe</a></li>
+                        <li><a href="#" class="nav-item">Recommendations</a></li>
+                        <li><a href="#" class="nav-item">Virtual Try-On</a></li>
+                        <li><a href="#" class="nav-item">Shop</a></li>
+                        <li><a href="/profile" class="nav-item ${window.location.pathname === '/profile' ? 'active' : ''}">Profile</a></li>
+                        <li><a href="#" class="nav-item">Settings</a></li>
+                    `;
+                    sidebarFooter.innerHTML = `<a href="/logout" class="nav-item logout-button">Logout (${authData.username})</a>`;
+                    if (profileIconLink) profileIconLink.style.display = 'flex';
+
+                    // Fetch and display user measurements
+                    fetchUserMeasurements(); 
+
+                } else {
+                    // Should not reach here if @login_required on /profile works
+                    // but as a fallback for UI consistency:
+                    sidebarNavLinks.innerHTML = `
+                        <li><a href="/login" class="nav-item">Login</a></li>
+                        <li><a href="/register" class="nav-item">Register</a></li>
+                    `;
+                    if (profileIconLink) profileIconLink.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error fetching auth status:', error);
+                const sidebarNavLinks = document.getElementById('sidebarNavLinks');
+                if (sidebarNavLinks) {
+                     sidebarNavLinks.innerHTML = '<li><a href="/login" class="nav-item">Login to continue</a></li>';
+                }
+            }
+        }
+
+        async function fetchUserMeasurements() {
+            try {
+                const response = await fetch('/api/user/measurements');
+                if (!response.ok) {
+                    // Handle case where user might be logged in but measurements endpoint fails
+                    console.error('Failed to fetch measurements status:', response.status);
+                    document.getElementById('profileMeasurementsList').innerHTML = '<p>Could not load measurements.</p>';
+                    return;
+                }
+                const measurements = await response.json();
+                
+                const measurementsList = document.getElementById('profileMeasurementsList');
+                if (measurements && Object.keys(measurements).length > 0) {
+                    let html = '<ul>';
+                    const displayOrder = ['height', 'weight', 'chest', 'underbust', 'waist', 'hips', 'sleeve', 'thigh', 'inseam', 'outseam'];
+                    displayOrder.forEach(key => {
+                        if (measurements[key] !== null && measurements[key] !== undefined) {
+                            html += `<li><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> <span>${measurements[key]} cm</span></li>`;
+                        }
+                    });
+                    html += '</ul>';
+                    measurementsList.innerHTML = html;
+                } else {
+                    measurementsList.innerHTML = '<p>No measurements saved yet. Go to the main page to add them!</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching user measurements:', error);
+                document.getElementById('profileMeasurementsList').innerHTML = '<p>Error loading measurements.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateUIAfterAuthCheck);
+    </script>
+</body>
+</html> 

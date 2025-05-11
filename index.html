@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fashion Advisor</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js",
+            "three/examples/jsm/loaders/GLTFLoader.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js",
+            "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js"
+        }
+    }
+    </script>
+
+    <!-- 
+    No script tags for three.js, OrbitControls, or GLTFLoader here anymore.
+    They will be handled by the import map and imported in script.js.
+    -->
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <button class="sidebar-toggle" id="sidebarToggle">&#9776;</button> <!-- Simple Menu Icon -->
+                <h1><a href="/" style="color: inherit; text-decoration: none;">AI Fashion Advisor</a></h1>
+            </div>
+            <div class="profile-icon-placeholder" id="profileIcon">
+                <!-- Placeholder for profile icon - will link to profile.html -->
+                <a href="/profile" aria-label="View Profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32px" height="32px"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20z"/></svg>
+                </a>
+            </div>
+        </header>
+
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <ul id="sidebarNavLinks">
+                    <!-- Links will be dynamically populated by JS -->
+                </ul>
+            </nav>
+            <div class="sidebar-footer" id="sidebarFooter">
+                <!-- Logout button will be dynamically added by JS if logged in -->
+            </div>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <h2>Welcome to your AI Fashion Advisor!</h2>
+            <p>This is where the main content of the application will be displayed. We'll add your 3D model viewer and other features here.</p>
+            
+            <div class="layout-container-horizontal">
+                <section id="onboarding-controls" class="column-left">
+                    <h3>Customize Your Avatar</h3>
+                    <form id="measurementForm">
+                        <div class="form-grid">
+                            <div><label for="height">Height (cm):</label><input type="number" id="height" name="height" ></div>
+                            <div><label for="weight">Weight (kg):</label><input type="number" id="weight" name="weight" ></div>
+                            <div><label for="chest">Chest (cm):</label><input type="number" id="chest" name="chest" ></div>
+                            <div><label for="underbust">Underbust (cm):</label><input type="number" id="underbust" name="underbust" ></div>
+                            <div><label for="waist">Waist (cm):</label><input type="number" id="waist" name="waist" ></div>
+                            <div><label for="hips">Hips (cm):</label><input type="number" id="hips" name="hips" ></div>
+                            <div><label for="sleeve">Sleeve Length (cm):</label><input type="number" id="sleeve" name="sleeve" ></div>
+                            <div><label for="thigh">Thigh (cm):</label><input type="number" id="thigh" name="thigh" ></div>
+                            <div><label for="inseam">Inseam (cm):</label><input type="number" id="inseam" name="inseam" ></div>
+                            <div><label for="outseam">Outseam (cm):</label><input type="number" id="outseam" name="outseam" ></div>
+                            
+                            <!-- Gender Toggle Switch to flow as a normal grid item -->
+                            <div class="form-group gender-toggle-group">
+                                <span class="gender-option-label active" data-gender="man">Man</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="genderSwitchInput" data-current-gender="man">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="gender-option-label" data-gender="woman">Woman</span>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <section id="avatar-display-area" class="column-right">
+                    <button type="button" id="generateModel">Generate 3D Model</button>
+                    <div id="canvas-container" style="width: 100%; height: 500px; margin-top: 10px; background-color: #222;">
+                        <!-- Canvas for 3D model will be here -->
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Any existing script tags should be preserved or re-integrated -->
+        </main>
+    </div>
+    <script type="module" src="script.js"></script> 
+    <!-- Add new script for sidebar toggle -->
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Gender Toggle Switch Logic
+        const genderSwitch = document.getElementById('genderSwitchInput');
+        const genderLabelMan = document.querySelector('.gender-option-label[data-gender="man"]');
+        const genderLabelWoman = document.querySelector('.gender-option-label[data-gender="woman"]');
+
+        if (genderSwitch) {
+            // Set initial state based on checkbox (if you prefer checkbox to be source of truth from start)
+            // Or, ensure checkbox initial checked state matches desired default (e.g., man)
+            if (genderSwitch.dataset.currentGender === 'woman') {
+                genderSwitch.checked = true;
+            }
+            updateGenderLabels(genderSwitch.checked);
+
+            genderSwitch.addEventListener('change', function() {
+                const isWoman = this.checked;
+                updateGenderLabels(isWoman);
+                this.dataset.currentGender = isWoman ? 'woman' : 'man';
+                
+                // IMPORTANT: Call your function from script.js here that handles the actual gender change and model loading
+                // For example, if you have a function like: window.handleGenderChange(isWoman);
+                // Or if your script.js directly accesses this switch's state upon model generation.
+                // This might involve dispatching a custom event, or your script.js might need to
+                // remove its old listener for the 'toggleGender' button and add one for this switch.
+                console.log("Gender switched to: ", isWoman ? "Woman" : "Man");
+                // Example: if your old button was toggleGender, and its click handler was toggleGenderAndLoadModel
+                // you might need to call something like that here, or adapt that function.
+                if (typeof window.toggleGenderAndLoadModel === 'function') {
+                     // If the old function was a simple toggle, it needs adaptation
+                     // For now, let's assume script.js will handle the model change based on the switch state.
+                } else if (typeof window.setGender === 'function') {
+                    window.setGender(isWoman ? 'female' : 'male'); // Assuming setGender function in script.js
+                }
+
+            });
+
+            // Allow clicking labels to toggle switch
+            if (genderLabelMan) {
+                genderLabelMan.addEventListener('click', () => {
+                    genderSwitch.checked = false;
+                    genderSwitch.dispatchEvent(new Event('change'));
+                });
+            }
+            if (genderLabelWoman) {
+                genderLabelWoman.addEventListener('click', () => {
+                    genderSwitch.checked = true;
+                    genderSwitch.dispatchEvent(new Event('change'));
+                });
+            }
+        }
+
+        function updateGenderLabels(isWomanChecked) {
+            if (isWomanChecked) {
+                genderLabelMan.classList.remove('active');
+                genderLabelWoman.classList.add('active');
+            } else {
+                genderLabelMan.classList.add('active');
+                genderLabelWoman.classList.remove('active');
+            }
+        }
+
+        // Function to save measurements
+        async function saveMeasurements() {
+            const measurementForm = document.getElementById('measurementForm');
+            const formData = new FormData(measurementForm);
+            const measurements = {};
+            const measurementIds = [
+                'height', 'weight', 'chest', 'underbust', 'waist', 
+                'hips', 'sleeve', 'thigh', 'inseam', 'outseam'
+            ];
+            measurementIds.forEach(id => {
+                const inputElement = document.getElementById(id);
+                if (inputElement && inputElement.value !== '') {
+                    measurements[id] = parseFloat(inputElement.value); 
+                } else if (inputElement) {
+                    measurements[id] = null; 
+                }
+            });
+
+            // Add gender to the measurements object
+            const genderSwitch = document.getElementById('genderSwitchInput');
+            if (genderSwitch) {
+                measurements.gender = genderSwitch.checked ? 'woman' : 'man';
+            }
+
+            try {
+                const response = await fetch('/api/user/measurements', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // CSRF token might be needed here if you implement CSRF protection later
+                    },
+                    body: JSON.stringify(measurements),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    console.log('Measurements saved:', result.message);
+                    // Optionally show a small success message to the user on the UI
+                } else {
+                    console.error('Failed to save measurements:', result.error);
+                    // Optionally show an error message
+                }
+            } catch (error) {
+                console.error('Error saving measurements:', error);
+            }
+        }
+
+        // Modify Generate Model Button Listener
+        const generateModelButton = document.getElementById('generateModel');
+        if (generateModelButton) {
+            generateModelButton.addEventListener('click', () => {
+                // First, try to save measurements if user is logged in
+                // Check login status (could be a global variable set by updateUIAfterAuthCheck)
+                // For simplicity here, we'll just call it. If not logged in, backend will reject.
+                saveMeasurements();
+
+                // Then, proceed with existing 3D model generation logic from script.js
+                // This part assumes your script.js has a function that gets triggered
+                // or that it reads form values directly.
+                if (typeof window.triggerModelGeneration === 'function') {
+                    window.triggerModelGeneration();
+                } else {
+                    console.log("Remember to integrate 3D model generation logic from script.js");
+                }
+            });
+        }
+
+        // Function to update UI based on auth status
+        async function updateUIAfterAuthCheck() {
+            try {
+                const response = await fetch('/api/auth/status');
+                const authData = await response.json();
+
+                const sidebarNavLinks = document.getElementById('sidebarNavLinks');
+                const sidebarFooter = document.getElementById('sidebarFooter');
+                const profileIconLink = document.querySelector('.profile-icon-placeholder a');
+                // const profileIconPlaceholder = document.getElementById('profileIcon'); // If we want to hide the whole icon
+
+                sidebarNavLinks.innerHTML = ''; // Clear existing links
+                sidebarFooter.innerHTML = ''; // Clear footer
+
+                if (authData.logged_in) {
+                    // User is logged in
+                    sidebarNavLinks.innerHTML = `
+                        <li><a href="/" class="nav-item ${window.location.pathname === '/' ? 'active' : ''}">Home</a></li>
+                        <li><a href="#" class="nav-item">Wardrobe</a></li>
+                        <li><a href="#" class="nav-item">Recommendations</a></li>
+                        <li><a href="#" class="nav-item">Virtual Try-On</a></li>
+                        <li><a href="#" class="nav-item">Shop</a></li>
+                        <li><a href="/profile" class="nav-item ${window.location.pathname === '/profile' ? 'active' : ''}">Profile</a></li>
+                        <li><a href="#" class="nav-item">Settings</a></li>
+                    `;
+                    sidebarFooter.innerHTML = `<a href="/logout" class="nav-item logout-button">Logout (${authData.username})</a>`;
+                    if (profileIconLink) profileIconLink.style.display = 'flex';
+
+                    // Fetch and populate user measurements for the form
+                    fetchAndPopulateMeasurements();
+
+                } else {
+                    // User is not logged in
+                    sidebarNavLinks.innerHTML = `
+                        <li><a href="/" class="nav-item ${window.location.pathname === '/' ? 'active' : ''}">Home</a></li>
+                        <li><a href="/login" class="nav-item">Login</a></li>
+                        <li><a href="/register" class="nav-item">Register</a></li>
+                    `;
+                    // No logout button in footer if not logged in
+                    if (profileIconLink) profileIconLink.style.display = 'none'; // Hide profile icon if not logged in
+                }
+            } catch (error) {
+                console.error('Error fetching auth status:', error);
+                // Handle error, maybe show default logged-out view
+                const sidebarNavLinks = document.getElementById('sidebarNavLinks');
+                if (sidebarNavLinks) {
+                     sidebarNavLinks.innerHTML = '<li><a href="/login" class="nav-item">Login to continue</a></li>';
+                }
+            }
+        }
+
+        async function fetchAndPopulateMeasurements() {
+            try {
+                const response = await fetch('/api/user/measurements');
+                if (!response.ok) {
+                    console.error('Failed to fetch measurements for form:', response.status);
+                    return; // Don't populate if error
+                }
+                const measurements = await response.json();
+                if (measurements) {
+                    const measurementIds = [
+                        'height', 'weight', 'chest', 'underbust', 'waist',
+                        'hips', 'sleeve', 'thigh', 'inseam', 'outseam'
+                    ];
+                    measurementIds.forEach(id => {
+                        const inputElement = document.getElementById(id);
+                        if (inputElement && (measurements[id] !== null && measurements[id] !== undefined)) {
+                            inputElement.value = measurements[id];
+                        }
+                    });
+                    
+                    // Populate gender switch based on fetched preference
+                    const genderSwitchInput = document.getElementById('genderSwitchInput');
+                    if (genderSwitchInput && measurements.gender) {
+                        if (measurements.gender === 'woman') {
+                            genderSwitchInput.checked = true;
+                        } else {
+                            genderSwitchInput.checked = false;
+                        }
+                        // Update the dataset and labels to reflect the loaded state
+                        genderSwitchInput.dataset.currentGender = measurements.gender;
+                        updateGenderLabels(genderSwitchInput.checked);
+                    } else if (genderSwitchInput) {
+                        // Default to 'man' if no gender preference saved yet, and update labels
+                        genderSwitchInput.checked = false;
+                        genderSwitchInput.dataset.currentGender = 'man';
+                        updateGenderLabels(false);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching or populating measurements:', error);
+            }
+        }
+
+        // Call the function when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', updateUIAfterAuthCheck);
+
+    </script>
+</body>
+</html> 

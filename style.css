@@ -1,0 +1,823 @@
+/* Basic Reset & Root Variables */
+:root {
+    --primary-bg: #1a1a1a; /* Dark gray / Almost black */
+    --secondary-bg: #2c2c2c; /* Slightly lighter gray for elements */
+    --tertiary-bg: #3f3f3f; /* Even lighter for accents or hover */
+    --primary-text: #e0e0e0; /* Light gray for text */
+    --secondary-text: #b0b0b0; /* Dimmer text */
+    --accent-color: #007bff; /* A contrasting color for highlights - can be changed */
+    --border-color: #4a4a4a;
+    --sidebar-width: 250px;
+    --header-height: 60px;
+    --transition-speed: 0.3s;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    line-height: 1.6;
+    overflow-x: hidden; /* Prevent horizontal scroll if sidebar animation is tricky */
+}
+
+/* App Container */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header */
+.app-header {
+    background-color: var(--secondary-bg);
+    color: var(--primary-text);
+    padding: 0 20px;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed; /* Keep header at the top */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.app-header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.app-header h1 {
+    font-size: 1.5rem;
+    margin-left: 15px;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: color var(--transition-speed) ease;
+}
+
+.sidebar-toggle:hover {
+    color: var(--accent-color);
+}
+
+.profile-icon-placeholder a {
+    color: var(--primary-text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.profile-icon-placeholder svg {
+    transition: fill var(--transition-speed) ease;
+}
+
+.profile-icon-placeholder a:hover svg {
+    fill: var(--accent-color);
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: var(--secondary-bg);
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height)); /* Full height minus header */
+    position: fixed;
+    top: var(--header-height); /* Position below header */
+    left: calc(-1 * var(--sidebar-width)); /* Start off-screen */
+    z-index: 999;
+    padding-top: 20px;
+    transition: left var(--transition-speed) ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav .nav-item {
+    display: block;
+    color: var(--primary-text);
+    text-decoration: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.sidebar-nav .nav-item:hover,
+.sidebar-nav .nav-item.active {
+    background-color: var(--tertiary-bg);
+    color: var(--accent-color);
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.logout-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 20px;
+    margin-top: var(--header-height); /* Account for fixed header */
+    flex-grow: 1;
+    background-color: var(--primary-bg);
+    position: relative; /* Optional: could help with z-index stacking if needed */
+    z-index: 1; /* Ensure main content is below sidebar (sidebar is 999) */
+}
+
+/* Basic Form Styling (can be expanded) */
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--secondary-text);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--primary-text);
+    border-radius: 4px;
+    transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+button,
+.cta-button {
+    background: linear-gradient(145deg, var(--tertiary-bg), var(--secondary-bg));
+    color: var(--primary-text);
+    padding: 12px 24px; /* Slightly larger padding */
+    border: 1px solid var(--border-color);
+    border-radius: 6px; /* Slightly more refined radius */
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500; /* Bolder text */
+    text-transform: uppercase; /* Uppercase text for a more stylized look */
+    letter-spacing: 0.5px;
+    transition: all var(--transition-speed) ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0px rgba(255,255,255,0.05); /* Subtle shadow and inner highlight */
+    margin-right: 10px;
+    margin-bottom: 10px; /* Add some bottom margin if buttons wrap */
+}
+
+button:hover,
+.cta-button:hover {
+    background: linear-gradient(145deg, var(--secondary-bg), var(--tertiary-bg));
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.1);
+}
+
+button:active,
+.cta-button:active {
+    transform: translateY(0px);
+    background: var(--secondary-bg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 2px 3px rgba(0,0,0,0.2);
+    color: var(--primary-text); /* Revert color or adjust as needed for active state */
+}
+
+/* Measurement form specific */
+#onboarding-measurements h3 {
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* Styling for the gender toggle when it's inside the form-grid */
+.form-grid .gender-toggle-group {
+    margin-top: 0; /* Let the grid-gap handle the spacing */
+    /* Ensure it aligns well within a potentially smaller grid cell */
+    /* justify-content: center; is inherited from .gender-toggle-group and should be fine */
+    /* You might want to add padding or adjust alignment if it looks cramped */
+    /* For example, if labels get too close to edges of the cell: */
+    /* padding-left: 5px; */
+    /* padding-right: 5px; */
+}
+
+#canvas-container {
+    background-color: var(--secondary-bg); /* Ensure canvas bg fits theme */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* Utility Classes (optional) */
+.text-center {
+    text-align: center;
+}
+
+/* Styling for auth pages (register.html, login.html) */
+.auth-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - var(--header-height)); 
+    padding: 20px;
+    margin-top: var(--header-height);
+}
+
+.auth-form {
+    background-color: var(--secondary-bg);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-form h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--primary-text);
+}
+
+.auth-form p#message {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+/* Links within auth forms or general links */
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+}
+
+a:hover {
+    color: #0056b3; /* Darker accent on hover */
+    text-decoration: underline;
+}
+
+
+/* Add this at the end of style.css if you had specific styles for .logo and nav in the old header */
+.app-header .logo h1 {
+    /* Adjust if needed, example: */
+    /* color: var(--accent-color); */
+}
+
+/* Hero Section */
+#hero {
+    text-align: center;
+    padding: 4rem 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+#hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+#hero p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: #666;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-button {
+    background-color: #5a3e8d;
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px; /* Rounded button */
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(90, 62, 141, 0.3);
+}
+
+.cta-button:hover {
+    background-color: #492f74;
+    transform: translateY(-2px);
+}
+
+/* Features Section */
+#features {
+    padding: 2rem 0;
+    text-align: center;
+}
+
+#features h2 {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.feature-item {
+    background-color: #fff;
+    padding: 2rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.feature-item h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: #5a3e8d;
+}
+
+.feature-item p {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    background-color: #333;
+    color: #f4f4f4;
+    margin-top: 3rem;
+}
+
+/* Smooth Animations Placeholder */
+/* We'll add more specific animations as components are built */
+/* Example: fade-in for sections */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInAnimation 0.8s ease-out forwards;
+}
+
+@keyframes fadeInAnimation {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add class .fade-in to sections in HTML or via JS to trigger */
+
+/* 3D Body Model Creation Section */
+#body-model-creation {
+    padding: 2rem 0;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-top: 2rem; /* Added margin from features section */
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+#body-model-creation h2 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+#body-model-creation > p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #666;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.model-creation-area {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 0 1rem; /* Add some padding for content inside */
+    text-align: left;
+}
+
+.measurement-inputs, .avatar-preview {
+    flex-basis: 45%; /* Each takes up roughly half the space */
+    min-width: 300px; /* Minimum width before wrapping */
+    padding: 1.5rem;
+    border-radius: 6px;
+    /* background-color: #f9f9f9; Optional: slightly different bg for these areas */
+    /* border: 1px solid #eee; */
+}
+
+.measurement-inputs h3, .avatar-preview h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #5a3e8d;
+    text-align: center;
+}
+
+.viewer-placeholder {
+    width: 100%;
+    height: 300px; /* Placeholder height, adjust as needed */
+    background-color: #e0e0e0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #777;
+    font-style: italic;
+}
+
+/* Placeholder for input fields styling - to be detailed later */
+.measurement-inputs p i {
+    color: #777;
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Styling for Measurement Form */
+#measurements-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Spacing between form groups */
+}
+
+/* Custom Styling for Radio Button Groups (Units & Gender) */
+.unit-selector,
+.gender-selector {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 0.5rem;
+    margin-bottom: 1rem; 
+}
+
+.unit-selector > label:first-child, /* The "Units:" or "Avatar Gender:" text label */
+.gender-selector > label:first-child {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.25rem; 
+}
+
+.unit-options, /* Wrapper for the actual radio button options */
+.gender-options {
+    display: flex;
+    gap: 0.75rem; 
+}
+
+.unit-selector input[type="radio"],
+.gender-selector input[type="radio"] {
+    opacity: 0; 
+    position: fixed;
+    width: 0;
+}
+
+.unit-options label, /* Individual option labels (cm, inches, Male, Female) */
+.gender-options label {
+    display: inline-block;
+    background-color: #f0f0f0; 
+    color: #555;
+    padding: 10px 20px;
+    border-radius: 20px; 
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.unit-options label:hover,
+.gender-options label:hover {
+    background-color: #e0e0e0;
+    box-shadow: 0 3px 7px rgba(0,0,0,0.1);
+}
+
+.unit-selector input[type="radio"]:checked + label,
+.gender-selector input[type="radio"]:checked + label {
+    background-color: #5a3e8d; 
+    color: #fff;
+    border-color: #492f74; 
+    box-shadow: 0 2px 8px rgba(90, 62, 141, 0.4);
+}
+
+/* Remove old, simpler unit-selector styles if they exist */
+/* The following were the original simpler styles, ensure they are removed or overridden */
+/* 
+.unit-selector label 
+{
+    display: flex;
+    align-items: center;
+    gap: 0.25rem; 
+    font-weight: normal; 
+}
+
+.unit-selector label:first-child
+{
+    font-weight: 500;
+    color: #555;
+}
+*/
+
+#measurements-form h4 {
+    font-size: 1.2rem;
+    color: #444;
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column; /* Labels above inputs */
+    gap: 0.25rem; /* Space between label and input */
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input[type="number"],
+.form-group input[type="text"] /* If we add text inputs later */
+{
+    padding: 10px 12px; /* Slightly more horizontal padding */
+    border: 1px solid #e0e0e0; /* Lighter default border */
+    border-radius: 6px; /* Slightly more rounded */
+    font-size: 0.95rem;
+    width: 100%;
+    background-color: #fdfdfd; /* Very light background */
+    color: #333;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-group input[type="number"]:focus,
+.form-group input[type="text"]:focus {
+    border-color: #5a3e8d;
+    box-shadow: 0 0 0 2px rgba(90, 62, 141, 0.2);
+    outline: none;
+}
+
+.unit-selector input[type="radio"] {
+    margin-right: 5px;
+    accent-color: #5a3e8d;
+}
+
+#measurements-form .cta-button {
+    margin-top: 1.5rem;
+    width: auto; /* Allow button to size to content */
+    align-self: center; /* Center the button */
+}
+
+/* Gender Toggle Switch Styles */
+.gender-toggle-group {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the whole group if it's on its own line */
+    gap: 10px;
+    margin-top: 20px; /* Add some space above */
+    margin-bottom: 10px;
+}
+
+.gender-option-label {
+    font-size: 0.95rem;
+    color: var(--secondary-text);
+    cursor: pointer;
+    transition: color var(--transition-speed) ease;
+}
+
+.gender-option-label.active {
+    color: var(--primary-text);
+    font-weight: 500;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px; /* Width of the switch */
+    height: 34px; /* Height of the switch */
+}
+
+.toggle-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--tertiary-bg); /* Track color */
+    transition: .4s;
+    border-radius: 34px; /* Rounded track */
+    border: 1px solid var(--border-color);
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px; /* Height of the thumb */
+    width: 26px; /* Width of the thumb */
+    left: 4px; /* Initial position of thumb */
+    bottom: 3px; /* Initial position of thumb */
+    background-color: var(--primary-text); /* Thumb color */
+    transition: .4s;
+    border-radius: 50%; /* Circular thumb */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--accent-color); /* Track color when active */
+    border-color: var(--accent-color);
+}
+
+.toggle-switch input:focus + .toggle-slider {
+    box-shadow: 0 0 1px var(--accent-color), 0 0 0 2px rgba(0, 123, 255, 0.25); /* Focus outline */
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px); /* Move thumb to the right */
+}
+
+
+/* End of Gender Toggle Switch Styles */
+
+/* Two-column layout for main content */
+.layout-container-horizontal {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens if necessary */
+    gap: 20px; /* Space between the two columns */
+    margin-top: 20px; /* Space from the welcome message */
+}
+
+.column-left,
+.column-right {
+    flex: 1; /* Each column tries to take up equal space */
+    min-width: 300px; /* Minimum width before wrapping - adjust as needed */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Specifics for left column (controls) */
+#onboarding-controls h3 {
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center; /* Center the heading */
+}
+
+/* Specifics for right column (avatar display) */
+#avatar-display-area {
+    align-items: center; /* Center the button if the column is wider */
+}
+
+#avatar-display-area #generateModel {
+    margin-bottom: 15px; /* Space between button and canvas */
+    width: auto; /* Allow button to size to its content */
+    max-width: 300px; /* Optional: prevent button from becoming too wide */
+}
+
+#canvas-container {
+    flex-grow: 1; /* Allow canvas container to take available vertical space */
+    /* Ensure background and border are still applied if they were previously here or inline */
+    /* background-color: var(--secondary-bg); already in general styles */
+    /* border: 1px solid var(--border-color); already in general styles */
+}
+
+/* Responsive adjustments (optional, can be refined) */
+@media (max-width: 768px) {
+    .layout-container-horizontal {
+        flex-direction: column;
+    }
+    .column-left,
+    .column-right {
+        min-width: 100%; /* Full width on smaller screens */
+    }
+    #avatar-display-area #generateModel {
+        width: 100%; /* Make button full width on small screens */
+        max-width: none;
+    }
+}
+
+/* Profile Page - Measurements Display */
+#profileMeasurementsSectionContainer {
+    background-color: var(--secondary-bg);
+    padding: 25px;
+    border-radius: 12px; /* Curvy container */
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+#profileMeasurementsSectionContainer h3 {
+    color: var(--primary-text);
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+#profileMeasurementsSectionContainer > p em { /* The placeholder paragraph */
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+}
+
+#profileMeasurementsList ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Responsive columns for measurements */
+    gap: 15px;
+}
+
+#profileMeasurementsList li {
+    background-color: var(--tertiary-bg);
+    padding: 15px;
+    border-radius: 8px; /* Curvy boxes for each item */
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between; /* Label on left, value on right */
+    align-items: center;
+}
+
+#profileMeasurementsList li strong {
+    color: var(--primary-text);
+    font-weight: 500;
+}
+
+#profileMeasurementsList li span { /* Assuming value is wrapped in a span if needed, or just direct text */
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+#profileMeasurementsList > p { /* For 'No measurements' or 'Loading' messages */
+    text-align: center;
+    color: var(--secondary-text);
+    font-style: italic;
+    padding: 20px;
+} 
